@@ -12,31 +12,24 @@ import {
 import { Feather } from "@expo/vector-icons";
 
 const App = () => {
-  // const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState([]);
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState();
-  const [text, setText] = useState();
+  const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
 
-  let notes = [
-    {
-      id:0,
-      title:'Note',
-      text:'text exemple'
-    }
-  ]
-  console.log(notes.length)
+  console.log(notes.length);
   function addNote() {
     setOpen(true);
   }
-  function createNote(){
-    let obj = {
-      title:title,
-      text:text,
-    }
-    notes.slice(0)
-    notes.push('teste')
-    console.log(notes)
-    setOpen(false)
+  function createNote() {
+    let note = {
+      title: title,
+      text: text,
+    };
+    setNotes((notes) => [...notes, note]);
+    setTitle(""); 
+    setText(""); 
+    setOpen(false);
   }
 
   return (
@@ -52,17 +45,19 @@ const App = () => {
           renderItem={({ item }) => (
             <View style={styles.note}>
               <Text style={styles.noteTitle}> {item.title}</Text>
-              <Text style={styles.noteText}>
-                {" "}
-                {item.text}
-              </Text>
+              <Text style={styles.noteText}> {item.text}</Text>
             </View>
           )}
         />
       </View>
-      <TouchableOpacity style={styles.footer} onPress={() => addNote()}>
-        <Feather name="plus" size={20} color="#fff" />
-      </TouchableOpacity>
+      <View style={styles.footer}>
+          <TouchableOpacity
+              style={styles.button}
+              onPress={() => addNote()}
+            >
+              <Feather name="plus" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
       <StatusBar barStyle="light-content" />
       {
         <Modal visible={open} animationType="slide">
@@ -71,36 +66,37 @@ const App = () => {
               <Text style={styles.title}> D-Do </Text>
             </View>
 
-            <View style={styles.contentList}>
+            <View style={styles.contentModal}>
               <View style={styles.form}>
-                <TextInput 
-                placeholder="Titulo" 
-                placeholderTextColor="#ddd" 
-                style={styles.noteTitle}
-                value={title}
-                onChangeText={text => setTitle(text)}
+                <TextInput
+                  placeholder="Titulo"
+                  placeholderTextColor="#ddd"
+                  style={styles.inputTitle}
+                  value={title}
+                  onChangeText={(text) => setTitle(text)}
                 />
               </View>
               <View style={styles.textAreaContainer}>
                 <TextInput
-                  style={styles.textArea}
+                  style={styles.inputText}
                   underlineColorAndroid="transparent"
                   placeholder="Digite aqui "
                   placeholderTextColor="#ddd"
                   numberOfLines={10}
                   multiline={true}
                   value={text}
-                  onChangeText={text => setText(text)}
+                  onChangeText={(text) => setText(text)}
                 />
               </View>
             </View>
-
-            <TouchableOpacity
-              style={{ ...styles.footer, backgroundColor: "#1B1B1F" }}
+          <View style={styles.footer}>
+          <TouchableOpacity
+              style={{ ...styles.button, backgroundColor: "#1B1B1F" }}
               onPress={() => createNote()}
             >
               <Feather name="plus" size={20} color="#fff" />
             </TouchableOpacity>
+          </View>
           </View>
         </Modal>
       }
@@ -128,9 +124,11 @@ const styles = StyleSheet.create({
   },
   contentList: {
     height: "80%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: "10%",
+  },
+  contentModal:{
+    alignItems:'center',
+    justifyContent:"center",
+    height:'80%',
   },
   note: {
     borderRadius: 20,
@@ -148,28 +146,36 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "400",
     color: "#fff",
-    width: "50%",
-    textAlign: "center",
+    margin:'2%'
   },
-  footer: {
-    height: "7%",
-    width: "15%",
-    left: "80%",
-    bottom: "5%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: "5%",
-    backgroundColor: "#313866",
+  inputTitle:{
+    fontSize:40,
+    color:'#fff'
+  },
+  inputText:{
+    fontSize:18,
+    color:'#fff'
+  },
+  footer:{
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  button: {
     borderRadius: 50,
+    width:60,
+    height:60,
+    justifyContent:"center",
+    alignItems:'center',
+    backgroundColor: "#50409A",
+    margin:"2%"
   },
   textAreaContainer: {
-    padding: '10%',
+    padding: "10%",
   },
   textArea: {
-    height: '50%',
+    height: "50%",
     justifyContent: "flex-start",
-    color:'#fff'
-
-  }
+    color: "#fff",
+  },
 });
 export default App;

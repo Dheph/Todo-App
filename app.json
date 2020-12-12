@@ -2,7 +2,8 @@
   "expo": {
     "name": "D-Do",
     "slug": "D-Do",
-    "version": "1.0.0",
+    "author":"Dhepherson Ribeiro Miranda",
+    "version": "0.10.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -23,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package":"com.Dheph.Dheph"
     },
     "web": {
       "favicon": "./assets/favicon.png"
