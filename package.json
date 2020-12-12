@@ -1,5 +1,6 @@
 {
   "main": "node_modules/expo/AppEntry.js",
+  "author": "Dhepherson Ribeiro Miranda",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -15,8 +16,7 @@
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.4.tar.gz",
     "react-native-swipe-list-view": "^3.2.5",
-    "react-native-web": "~0.13.12",
-    "sync-storage": "^0.4.2"
+    "react-native-web": "~0.13.12"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"

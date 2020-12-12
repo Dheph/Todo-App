@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  FlatList,
   StyleSheet,
   StatusBar,
   Modal,
@@ -94,7 +93,7 @@ const App = () => {
             <View style={styles.contentModal}>
               <View style={styles.form}>
                 <TextInput
-                  placeholder="Titulo"
+                  placeholder="Note title"
                   placeholderTextColor="#ddd"
                   style={styles.inputTitle}
                   value={title}
@@ -105,7 +104,7 @@ const App = () => {
                 <TextInput
                   style={styles.inputText}
                   underlineColorAndroid="transparent"
-                  placeholder="Digite aqui "
+                  placeholder="write here"
                   placeholderTextColor="#ddd"
                   numberOfLines={10}
                   multiline={true}
