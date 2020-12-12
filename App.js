@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,11 @@ import {
   StatusBar,
   Modal,
   TextInput,
+  Alert,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { SwipeListView } from "react-native-swipe-list-view";
+import firebase from "./src/services/firebaseConnection";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
@@ -17,27 +19,57 @@ const App = () => {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
 
-  function addNote() {
-    setOpen(true);
-  }
-  function createNote() {
-    let note = {
-      id:Math.floor(Math.random() * 1000),
+  useEffect(() => {
+    async function loadNotes() {
+      const db = await firebase.database().ref("notes");
+     await db.on("value", (snapshot) => {
+        snapshot.forEach((chilItem) => {
+          let newNotes = {
+            id: chilItem.key,
+            title: chilItem.val().title,
+            text: chilItem.val().text,
+          };
+          setNotes((notes) => [...notes, newNotes]);
+        });
+      });
+    }
+    loadNotes();
+  }, []);
+
+  async function createNote() {
+    const db = await firebase.database().ref("notes");
+    const key = (await db.push()).key;
+
+    await db.child(key).set({
       title: title,
       text: text,
-    };
-    console.log(note.id)
-    setNotes((notes) => [...notes, note]);
+    });
     setTitle("");
     setText("");
     setOpen(false);
+    await db.once("value", (snapshot) => {
+      snapshot.forEach((chilItem) => {
+        let newNotes = {
+          id: chilItem.key,
+          title: chilItem.val().title,
+          text: chilItem.val().text,
+        };
+        setNotes([...notes, newNotes]);
+      });
+    });
+    
   }
 
-  function deleteNote(indexNote){
+  async function deleteNote(indexNote) {
+    const db = await firebase.database().ref("notes");
+    const key = indexNote;
+
+    await db.child(key).remove();
+    Alert.alert("Já é", "Anotação removida ");
     const newData = [...notes];
-        const prevIndex = notes.findIndex(item => item.id === indexNote);
-        newData.splice(prevIndex, 1);
-        setNotes(newData);
+    const prevIndex = notes.findIndex((item) => item.id === indexNote);
+    newData.splice(prevIndex, 1);
+    setNotes(newData);
   }
 
   return (
@@ -55,27 +87,25 @@ const App = () => {
           previewOpenDelay={3000}
           showsVerticalScrollIndicator={false}
           renderHiddenItem={(hidden) => (
-            
             <View style={styles.hiddenButtons}>
               <TouchableOpacity
                 style={[styles.backRightBtn, styles.backRightBtnRight]}
                 onPress={() => deleteNote(hidden.item.id)}
               >
-                <Feather name="trash" size={25} color="#fff"/>
+                <Feather name="trash" size={25} color="#fff" />
               </TouchableOpacity>
             </View>
           )}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View style={styles.note} onPress={() => console.log(item.id)}>
               <Text style={styles.noteTitle}> {item.title}</Text>
               <Text style={styles.noteText}> {item.text}</Text>
             </View>
           )}
-          
         />
       </View>
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.button} onPress={() => addNote()}>
+        <TouchableOpacity style={styles.button} onPress={() => setOpen(true)}>
           <Feather name="plus" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -201,25 +231,24 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     color: "#fff",
   },
-  hiddenButtons:{
-    alignItems: 'center',
+  hiddenButtons: {
+    alignItems: "center",
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingLeft: 15,
   },
   backRightBtn: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
     width: 75,
-    padding:10,
-    borderRadius:20,
-    
-},
-backRightBtnRight: {
+    padding: 10,
+    borderRadius: 20,
+  },
+  backRightBtnRight: {
     backgroundColor: "#313866",
-    right: '5%',
-},
+    right: "5%",
+  },
 });
 export default App;
