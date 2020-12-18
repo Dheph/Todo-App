@@ -21,25 +21,27 @@ const App = () => {
 
   useEffect(() => {
     async function loadNotes() {
-      const db = await firebase.database().ref("notes");
-     await db.on("value", (snapshot) => {
-        snapshot.forEach((chilItem) => {
-          let newNotes = {
-            id: chilItem.key,
-            title: chilItem.val().title,
-            text: chilItem.val().text,
-          };
-          setNotes((notes) => [...notes, newNotes]);
-        });
+
+    await firebase.database().ref("notes").on('value',(snapshot) => {
+      setNotes([])
+      snapshot.forEach((chilItem) => {
+        let newNotes = {
+          id: chilItem.key,
+          title: chilItem.val().title,
+          text: chilItem.val().text,
+        };
+        setNotes( notes => [...notes, newNotes]);
       });
+    })
+       
+ 
     }
     loadNotes();
   }, []);
 
   async function createNote() {
-    const db = await firebase.database().ref("notes");
-    const key = (await db.push()).key;
-
+    let db = await firebase.database().ref("notes");
+    let key = (await db.push()).key;
     await db.child(key).set({
       title: title,
       text: text,
@@ -47,17 +49,7 @@ const App = () => {
     setTitle("");
     setText("");
     setOpen(false);
-    await db.once("value", (snapshot) => {
-      snapshot.forEach((chilItem) => {
-        let newNotes = {
-          id: chilItem.key,
-          title: chilItem.val().title,
-          text: chilItem.val().text,
-        };
-        setNotes([...notes, newNotes]);
-      });
-    });
-    
+
   }
 
   async function deleteNote(indexNote) {
@@ -121,7 +113,7 @@ const App = () => {
             </TouchableOpacity>
 
             <View style={styles.contentModal}>
-              <View style={styles.form}>
+              <View>
                 <TextInput
                   placeholder="Note title"
                   placeholderTextColor="#ddd"
